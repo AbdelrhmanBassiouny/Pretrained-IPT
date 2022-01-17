@@ -49,7 +49,9 @@ class SRData(data.Dataset):
             self.derain_test = os.path.join(args.dir_data, "Rain100L")
             self.derain_lr_test = search(self.derain_test, "rain")
             self.derain_hr_test = [path.replace("rainy/","no") for path in self.derain_lr_test]
-            print(self.derain_hr_test)
+            print('hboooooooom', self.derain_hr_test)
+            print('kijfeuhfhrwbfhjur', self.derain_lr_test)
+            
         if self.args.deblur:
             self.deblur_dataroot = os.path.join(args.dir_data, "GOPRO_Large/train")
             self.deblur_hr = search(self.deblur_dataroot, "sharp")
@@ -113,6 +115,7 @@ class SRData(data.Dataset):
                     self._check_and_load(args.ext, l, b, verbose=True) 
         if train:
             n_patches = args.batch_size * args.test_every
+            print(f'patches {n_patches} batch size {args.batch_size} data train {len(args.data_train)}')
             n_images = len(args.data_train) * len(self.images_hr)
             if n_images == 0:
                 self.repeat = 0
@@ -226,6 +229,8 @@ class SRData(data.Dataset):
         return hr, filename
     
     def _load_rain_test(self, idx):
+        # print('index is this', idx)
+        # print('length is this', len(self.derain_hr_test))
         f_hr = self.derain_hr_test[idx]
         f_lr = self.derain_lr_test[idx]
         filename, _ = os.path.splitext(os.path.basename(f_lr))
