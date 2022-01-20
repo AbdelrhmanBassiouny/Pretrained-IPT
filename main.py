@@ -28,6 +28,8 @@ def main():
                 args.pretrain = "/cache/models/ipt.pt"
             state_dict = torch.load(args.pretrain)
             _model.model.load_state_dict(state_dict,strict = False)
+            _model.named_parameters()
+        return _model
         _loss = loss.Loss(args, checkpoint) if not args.test_only else None
         t = Trainer(args, loader, _model, _loss, checkpoint)
         if not args.test_only:
