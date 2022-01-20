@@ -26,7 +26,7 @@ def get_model():
                 args.pretrain = "/cache/models/ipt.pt"
             state_dict = torch.load(args.pretrain)
             _model.model.load_state_dict(state_dict, strict= False)
-        return _model
+        print(_model)
 
 def main():
     global model
