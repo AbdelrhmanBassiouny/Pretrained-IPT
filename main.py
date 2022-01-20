@@ -26,7 +26,9 @@ def get_model():
                 args.pretrain = "/cache/models/ipt.pt"
             state_dict = torch.load(args.pretrain)
             _model.model.load_state_dict(state_dict, strict= False)
-        print(_model)
+        for param in _model.named_parameters():
+            if param[0].split('.')[1] == "body":
+                print(param)
 
 def main():
     global model
