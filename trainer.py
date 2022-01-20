@@ -145,17 +145,19 @@ class Trainer():
                 d.dataset.set_scale(idx_scale)
                 print('printing d', d)
                 if self.args.derain:
-                    for hr, lr, filename in tqdm(d, ncols=80): # not sure if it is (hr, lr) or (lr, hr)
+                    for norain, rain, filename in tqdm(d, ncols=80): # not sure if it is (hr, rain) or (rain, hr)
                         
                         self.optimizer.zero_grad()
-                        hr,lr = self.prepare(hr, lr)
-                        # lr = self.prepare(lr)[0]
-                        sr = self.model(lr, idx_scale)
-                        loss = self.loss(sr, hr)
+                        norain,rain = self.prepare(norain, rain)
+                        # rain = self.prepare(rain)[0]
+                        sr = self.model(rain, idx_scale)
+                        print("SR SHAPEE ===== ", sr.shape)
+                        print("norain SHAPEE ===== ", norain.shape)
+                        loss = self.loss(sr, norain)
                         loss.backward()
                         self.optimizer.step()
                         
-                        save_list = [lr, sr, hr]
+                        save_list = [rain, sr, norain]
                         self.ckp.log[-1, idx_data, idx_scale] += utility.calc_psnr(
                             sr, norain, scale, self.args.rgb_range
                         ) 

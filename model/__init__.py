@@ -162,7 +162,9 @@ class Model(nn.Module):
         x_unfold = torch.nn.functional.unfold(x, padsize, stride=int(shave/2)).transpose(0,2).contiguous()
 
         x_hw_cut = x[...,(h-padsize):,(w-padsize):]
+        print("SHAPEE ============== ", x_hw_cut.shape)
         y_hw_cut = self.model.forward(x_hw_cut.cuda()).cpu()
+        print("HEEEEEEEEEEEEEERRRRRRRRRRRRRRRRR")
 
         x_h_cut = x[...,(h-padsize):,:]
         x_w_cut = x[...,:,(w-padsize):]
@@ -179,8 +181,11 @@ class Model(nn.Module):
 
         x_range = x_unfold.size(0)//batchsize + (x_unfold.size(0)%batchsize !=0)
         x_unfold.cuda()
+        print("\n\n XRANGEEEEE ====== ", x_range)
         for i in range(x_range):
             y_unfold.append(P.data_parallel(self.model, x_unfold[i*batchsize:(i+1)*batchsize,...], range(self.n_GPUs)).cpu())
+            print("i ================ ", i)
+        print("HEEEEEEEEEEEEEERRRRRRRRRRRRRRRRReeeeeeeeee")
         y_unfold = torch.cat(y_unfold,dim=0)
 
         y = torch.nn.functional.fold(y_unfold.view(y_unfold.size(0),-1,1).transpose(0,2).contiguous(),((h-h_cut)*scale,(w-w_cut)*scale), padsize*scale, stride=int(shave/2*scale))
