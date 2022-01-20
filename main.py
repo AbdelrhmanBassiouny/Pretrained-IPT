@@ -28,7 +28,8 @@ def get_model():
             _model.model.load_state_dict(state_dict, strict= False)
         for param in _model.named_parameters():
             if param[0].split('.')[1] == "body":
-                print(param)
+            #   print(param[0])
+              param[1].requires_grad = False
 
 def main():
     global model
