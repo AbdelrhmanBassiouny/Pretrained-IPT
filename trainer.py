@@ -155,7 +155,7 @@ class Trainer():
                         loss.backward()
                         self.optimizer.step()
                         
-                        save_list = [sr]
+                        save_list = [lr, sr, hr]
                         self.ckp.log[-1, idx_data, idx_scale] += utility.calc_psnr(
                             sr, norain, scale, self.args.rgb_range
                         ) 
