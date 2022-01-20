@@ -30,6 +30,7 @@ def get_model():
             if param[0].split('.')[1] == "body":
             #   print(param[0])
               param[1].requires_grad = False
+        return _model
 
 def main():
     global model
