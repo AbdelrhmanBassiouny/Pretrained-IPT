@@ -152,8 +152,6 @@ class Trainer():
                         # rain = self.prepare(rain)[0]
                         assert norain is not None
                         sr = self.model(rain, idx_scale, opt=self.optimizer, loss=self.loss, output=norain)
-                        print("SR SHAPEE ===== ", sr.shape)
-                        print("norain SHAPEE ===== ", norain.shape)
                         # loss = self.loss(sr, norain)
                         # loss.backward()
                         # self.optimizer.step()

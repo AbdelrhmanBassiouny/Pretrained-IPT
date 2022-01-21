@@ -311,13 +311,11 @@ class Model(nn.Module):
 
         output_hw_cut = output[..., (h-padsize):, (w-padsize):]
         
-        print("\n\n SHAPEE ============== ", x_hw_cut.shape)
         pred = self.model.forward(x_hw_cut.cuda())
         if self.training:
             assert output is not None
             self.train_step(pred, output_hw_cut)
         y_hw_cut = pred.cpu()
-        print("HEEEEEEEEEEEEEERRRRRRRRRRRRRRRRR")
 
         x_h_cut = x[...,(h-padsize):,:]
         x_w_cut = x[...,:,(w-padsize):]
@@ -343,7 +341,7 @@ class Model(nn.Module):
 
         x_range = x_unfold.size(0)//batchsize + (x_unfold.size(0)%batchsize !=0)
         x_unfold.cuda()
-        print("\n\n XRANGEEEEE ====== ", x_range)
+
         for i in range(x_range):
             pred = P.data_parallel(
                 self.model, x_unfold[i*batchsize:(i+1)*batchsize, ...], range(self.n_GPUs))
@@ -352,8 +350,6 @@ class Model(nn.Module):
                 self.train_step(
                     pred, output_unfold[i*batchsize:(i+1)*batchsize, ...])
             y_unfold.append(pred.cpu())
-            print("i ================ ", i)
-        print("HEEEEEEEEEEEEEERRRRRRRRRRRRRRRRReeeeeeeeee")
         y_unfold = torch.cat(y_unfold,dim=0)
 
         y = torch.nn.functional.fold(y_unfold.view(y_unfold.size(0),-1,1).transpose(0,2).contiguous(),((h-h_cut)*scale,(w-w_cut)*scale), padsize*scale, stride=int(shave/2*scale))
