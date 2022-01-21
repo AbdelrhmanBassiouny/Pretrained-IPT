@@ -423,7 +423,7 @@ class Model(nn.Module):
         divisor = torch.nn.functional.fold(torch.nn.functional.unfold(y_ones ,(padsize*scale,padsize*scale-shave*scale), stride=int(shave/2*scale)),(padsize*scale,(w-w_cut-shave)*scale), (padsize*scale,padsize*scale-shave*scale), stride=int(shave/2*scale)) 
         y_h_cut_inter = y_h_cut_inter/divisor
         print("\n\n\n y_hcut_indexed_shape ===== ", y_h_cut[..., :, int(
-            shave/2*scale):(w-w_cut)*scale-int(shave/2*scale)])
+            shave/2*scale):(w-w_cut)*scale-int(shave/2*scale)].shape)
         y_h_cut[...,:,int(shave/2*scale):(w-w_cut)*scale-int(shave/2*scale)] = y_h_cut_inter
         return y_h_cut
         
