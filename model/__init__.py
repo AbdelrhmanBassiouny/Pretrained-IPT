@@ -408,7 +408,7 @@ class Model(nn.Module):
         print("\n\n\ny_unfold_shape == ", y_h_cut_unfold.shape)
         untr_y = y_h_cut_unfold.view(y_h_cut_unfold.size(
             0), -1, 1)
-        print("\n\n\ny_untr_shape == ", y_h_cut_unfold.shape)
+        print("\n\n\ny_untr_shape == ", untr_y.shape)
         input_y = y_h_cut_unfold.view(y_h_cut_unfold.size(
             0), -1, 1).transpose(0, 2).contiguous()
         print("\n\n\n tr_y === ", input_y.shape)
