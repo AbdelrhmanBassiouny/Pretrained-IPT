@@ -100,7 +100,9 @@ class Trainer():
                         norain,rain = self.prepare(norain, rain)
                         assert norain is not None
                         sr = self.model(rain, idx_scale, opt=self.optimizer, loss=self.loss, output=norain)
-                        
+                        self.ckp_train.log[-1, idx_data, idx_scale] += utility.calc_psnr(
+                            sr, norain, scale, self.args.rgb_range
+                        )
                     self.ckp_train.log[-1, idx_data, idx_scale] /= len(d)
                     best = self.ckp_train.log.max(0)
                     self.ckp_train.write_log(
