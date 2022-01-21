@@ -28,7 +28,8 @@ def get_model():
             _model.model.load_state_dict(state_dict, strict= False)
         for param in _model.named_parameters():
             if param[0].split('.')[1] == "body":
-              param[1].requires_grad = False
+            #   param[1].requires_grad = False
+              pass
 
         return _model
 
@@ -42,7 +43,7 @@ def main():
         if not args.test_only:
             while not t.terminate():
                 t.train()
-                t.test()
+                # t.test()
         else:
             t.test()
         checkpoint.done()
