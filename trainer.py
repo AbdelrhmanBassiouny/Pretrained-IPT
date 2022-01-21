@@ -150,12 +150,12 @@ class Trainer():
                         self.optimizer.zero_grad()
                         norain,rain = self.prepare(norain, rain)
                         # rain = self.prepare(rain)[0]
-                        sr = self.model(rain, idx_scale, opt=self.optimizer, loss=self.loss)
+                        sr = self.model(rain, idx_scale, opt=self.optimizer, loss=self.loss, output=norain)
                         print("SR SHAPEE ===== ", sr.shape)
                         print("norain SHAPEE ===== ", norain.shape)
-                        loss = self.loss(sr, norain)
-                        loss.backward()
-                        self.optimizer.step()
+                        # loss = self.loss(sr, norain)
+                        # loss.backward()
+                        # self.optimizer.step()
                         
                         save_list = [rain, sr, norain]
                         self.ckp.log[-1, idx_data, idx_scale] += utility.calc_psnr(
