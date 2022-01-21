@@ -43,7 +43,7 @@ class Loss(nn.modules.loss._Loss):
                 print('{:.3f} * {}'.format(l['weight'], l['type']))
                 self.loss_module.append(l['function'])
 
-        self.log = torch.Tensor()
+        self.log = torch.Tensor([])
 
         device = torch.device('cpu' if args.cpu else 'cuda')
         self.loss_module.to(device)
