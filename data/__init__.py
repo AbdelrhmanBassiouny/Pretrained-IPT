@@ -35,6 +35,7 @@ class Data:
                 pin_memory=not args.cpu,
                 num_workers=args.n_threads,
             )]
+            
         self.loader_test = []
         for d in args.data_test:
             if d in ['Set5', 'Set14', 'B100', 'Urban100', 'Manga109','CBSD68','Rain100L','GOPRO_Large']:

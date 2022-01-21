@@ -49,8 +49,8 @@ class SRData(data.Dataset):
             self.derain_test = os.path.join(args.dir_data, "Rain100L")
             self.derain_lr_test = search(self.derain_test, "rain")
             self.derain_hr_test = [path.replace("rainy/","no") for path in self.derain_lr_test]
-            print('hboooooooom', self.derain_hr_test)
-            print('kijfeuhfhrwbfhjur', self.derain_lr_test)
+            data_range = [r.split('-') for r in args.data_range.split('/')]
+            print(data_range)
             
         if self.args.deblur:
             self.deblur_dataroot = os.path.join(args.dir_data, "GOPRO_Large/train")
