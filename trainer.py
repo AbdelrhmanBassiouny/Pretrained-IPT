@@ -78,11 +78,11 @@ class Trainer():
                 
     def train(self):
         torch.set_grad_enabled(True)
-        epoch = self.optimizer.get_last_epoch()
-        self.ckp.write_log(f'\nEvaluation:(epoch {epoch})')
-        self.ckp.add_log(
-            torch.zeros(1, len(self.loader_train), len(self.scale))
-        )
+        # epoch = self.optimizer.get_last_epoch()
+        # self.ckp.write_log(f'\nEvaluation:(epoch {epoch})')
+        # self.ckp.add_log(
+        #     torch.zeros(1, len(self.loader_train), len(self.scale))
+        # )
         self.model.train()
         timer_test = utility.timer()
         if self.args.save_results:
