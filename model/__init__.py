@@ -408,7 +408,7 @@ class Model(nn.Module):
         y_h_cut_unfold = torch.cat(y_h_cut_unfold,dim=0)
         print("\n\n\ny_unfold_shape == ", y_h_cut_unfold.shape)
         untr_y = y_h_cut_unfold.view(
-            int(y_h_cut_unfold.size(0)/self.batchsize_tr), -1, self.batchsize_tr)
+            int(y_h_cut_unfold.size(0)/self.batchsize_tr), -1, 1)
         print("\n\n\ny_untr_shape == ", untr_y.shape)
         input_y = untr_y.transpose(0, 2).contiguous()
         print("\n\n\n tr_y === ", input_y.shape)
