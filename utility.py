@@ -153,7 +153,7 @@ class checkpoint():
         if self.args.save_results:
             filename = self.get_path(
                 # 'results-{}'.format(dataset.dataset.name),
-                'results-{}'.format(self.name, "DIV2K"),
+                '{}_results-{}'.format(self.name, "DIV2K"),
                 '{}_x{}_'.format(filename, scale)
             )
 
