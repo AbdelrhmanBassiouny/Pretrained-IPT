@@ -413,7 +413,7 @@ class Model(nn.Module):
             0), -1, 1).transpose(0, 2).contiguous()
         print("\n\n\n tr_y === ", input_y.shape)
         print("\n\n\n func_inputs ==== ", (padsize*scale, (w-w_cut)
-                                           * scale), padsize*scale, stride=int(shave/2*scale))
+                                           * scale), padsize*scale, int(shave/2*scale))
         y_h_cut = torch.nn.functional.fold(y_h_cut_unfold.view(y_h_cut_unfold.size(0),-1,1).transpose(0,2).contiguous(),(padsize*scale,(w-w_cut)*scale), padsize*scale, stride=int(shave/2*scale))
         y_h_cut_unfold = y_h_cut_unfold[...,:,int(shave/2*scale):padsize*scale-int(shave/2*scale)].contiguous()
         y_h_cut_inter = torch.nn.functional.fold(y_h_cut_unfold.view(y_h_cut_unfold.size(0),-1,1).transpose(0,2).contiguous(),(padsize*scale,(w-w_cut-shave)*scale), (padsize*scale,padsize*scale-shave*scale), stride=int(shave/2*scale))
