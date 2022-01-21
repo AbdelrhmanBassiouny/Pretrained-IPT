@@ -153,6 +153,7 @@ class Model(nn.Module):
         loss = self.loss(sr.cuda(), norain.cuda())
         loss.backward()
         self.optimizer.step()
+        self.optimizer.scheduler.step()
         
     def forward_chop(self, x, shave=12):
         x.cpu()
@@ -311,6 +312,7 @@ class Model(nn.Module):
 
         output_hw_cut = output[..., (h-padsize):, (w-padsize):]
         
+        self.optimizer.zero_grad()
         pred = self.model.forward(x_hw_cut.cuda())
         if self.training:
             assert output is not None
@@ -343,6 +345,7 @@ class Model(nn.Module):
         x_unfold.cuda()
 
         for i in range(x_range):
+            self.optimizer.zero_grad()
             pred = P.data_parallel(
                 self.model, x_unfold[i*batchsize:(i+1)*batchsize, ...], range(self.n_GPUs))
             if self.training:
@@ -389,6 +392,7 @@ class Model(nn.Module):
         x_h_cut_unfold.cuda()
         
         for i in range(x_range):
+            self.optimizer.zero_grad()
             pred = P.data_parallel(
                 self.model, x_h_cut_unfold[i*batchsize:(i+1)*batchsize, ...], range(self.n_GPUs))
             if self.training:
@@ -426,6 +430,7 @@ class Model(nn.Module):
         y_w_cut_unfold=[]
         x_w_cut_unfold.cuda()
         for i in range(x_range):
+            self.optimizer.zero_grad()
             pred = P.data_parallel(
                 self.model, x_w_cut_unfold[i*batchsize:(i+1)*batchsize, ...], range(self.n_GPUs))
             if self.training:

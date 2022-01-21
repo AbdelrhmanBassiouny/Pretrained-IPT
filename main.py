@@ -43,7 +43,7 @@ def main():
         if not args.test_only:
             while not t.terminate():
                 t.train()
-                # t.test()
+                t.test()
         else:
             t.test()
         checkpoint.done()

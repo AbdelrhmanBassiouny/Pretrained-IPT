@@ -25,7 +25,7 @@ class Trainer():
         torch.set_grad_enabled(False)
 
         epoch = self.optimizer.get_last_epoch()
-        self.ckp.write_log('\nEvaluation:')
+        self.ckp.write_log('\nEvaluation:(epoch {epoch})')
         self.ckp.add_log(
             torch.zeros(1, len(self.loader_test), len(self.scale))
         )
@@ -42,7 +42,7 @@ class Trainer():
                         sr = self.model(rain, idx_scale)
                         sr = utility.quantize(sr, self.args.rgb_range)
                         
-                        save_list = [sr]
+                        save_list = [sr, rain, norain]
                         self.ckp.log[-1, idx_data, idx_scale] += utility.calc_psnr(
                             sr, norain, scale, self.args.rgb_range
                         ) 
@@ -50,6 +50,10 @@ class Trainer():
                             self.ckp.save_results(d, filename[0], save_list, 1)
                     self.ckp.log[-1, idx_data, idx_scale] /= len(d)
                     best = self.ckp.log.max(0)
+                    
+                    is_best = True if epoch == best else False
+                    self.ckp.save(self, epoch, is_best=is_best)
+                    
                     self.ckp.write_log(
                         '[{} x{}]\tPSNR: {:.3f} (Best: {:.3f} @epoch {})'.format(
                             d.dataset.name,
@@ -60,62 +64,6 @@ class Trainer():
                         )
                     )
                     isderain = 0
-                elif self.args.denoise:
-                    for hr, _,filename in tqdm(d, ncols=80):
-                        hr = self.prepare(hr)[0]
-                        noisy_level = self.args.sigma
-                        noise = torch.randn(hr.size()).mul_(noisy_level).cuda()
-                        nois_hr = (noise+hr).clamp(0,255)
-                        sr = self.model(nois_hr, idx_scale)
-                        sr = utility.quantize(sr, self.args.rgb_range)
-
-                        save_list = [sr, nois_hr, hr]
-                        self.ckp.log[-1, idx_data, idx_scale] += utility.calc_psnr(
-                            sr, hr, scale, self.args.rgb_range
-                        )
-                        if self.args.save_results:
-                            self.ckp.save_results(d, filename[0], save_list, 50)
-
-                    self.ckp.log[-1, idx_data, idx_scale] /= len(d)
-                    best = self.ckp.log.max(0)
-                    self.ckp.write_log(
-                        '[{} x{}]\tPSNR: {:.3f} (Best: {:.3f} @epoch {})'.format(
-                            d.dataset.name,
-                            scale,
-                            self.ckp.log[-1, idx_data, idx_scale],
-                            best[0][idx_data, idx_scale],
-                            best[1][idx_data, idx_scale] + 1
-                        )
-                    )
-                else:
-                    for lr, hr, filename in tqdm(d, ncols=80):
-                        lr, hr = self.prepare(lr, hr)
-                        sr = self.model(lr, idx_scale)
-                        sr = utility.quantize(sr, self.args.rgb_range)
-
-                        save_list = [sr]
-                        self.ckp.log[-1, idx_data, idx_scale] += utility.calc_psnr(
-                            sr, hr, scale, self.args.rgb_range
-                        )
-                        #import pdb
-                        #pdb.set_trace()
-                        if self.args.save_gt:
-                            save_list.extend([lr, hr])
-
-                        if self.args.save_results:
-                            self.ckp.save_results(d, filename[0], save_list, scale)
-                        i = i+1
-                    self.ckp.log[-1, idx_data, idx_scale] /= len(d)
-                    best = self.ckp.log.max(0)
-                    self.ckp.write_log(
-                        '[{} x{}]\tPSNR: {:.3f} (Best: {:.3f} @epoch {})'.format(
-                            d.dataset.name,
-                            scale,
-                            self.ckp.log[-1, idx_data, idx_scale],
-                            best[0][idx_data, idx_scale],
-                            best[1][idx_data, idx_scale] + 1
-                        )
-                    )
         self.ckp.write_log('Forward: {:.2f}s\n'.format(timer_test.toc()))
         self.ckp.write_log('Saving...')
 
@@ -131,7 +79,7 @@ class Trainer():
     def train(self):
         torch.set_grad_enabled(True)
         epoch = self.optimizer.get_last_epoch()
-        self.ckp.write_log(f'\nEvaluation:(epoch {epoch}')
+        self.ckp.write_log(f'\nEvaluation:(epoch {epoch})')
         self.ckp.add_log(
             torch.zeros(1, len(self.loader_train), len(self.scale))
         )
@@ -143,9 +91,8 @@ class Trainer():
             i = 0
             for idx_scale, scale in enumerate(self.scale):
                 d.dataset.set_scale(idx_scale)
-                print('printing d', d)
                 if self.args.derain:
-                    for norain, rain, filename in tqdm(d, ncols=80): # not sure if it is (hr, rain) or (rain, hr)
+                    for norain, rain, filename in tqdm(d, ncols=80):
                         
                         self.optimizer.zero_grad()
                         norain,rain = self.prepare(norain, rain)
@@ -156,37 +103,37 @@ class Trainer():
                         # loss.backward()
                         # self.optimizer.step()
                         
-                        save_list = [rain, sr, norain]
-                        self.ckp.log[-1, idx_data, idx_scale] += utility.calc_psnr(
-                            sr, norain, scale, self.args.rgb_range
-                        ) 
-                        if self.args.save_results:
-                            self.ckp.save_results(d, filename[0], save_list, 1)
-                    self.ckp.log[-1, idx_data, idx_scale] /= len(d)
-                    best = self.ckp.log.max(0)
-                    self.ckp.write_log(
-                        '[{} x{}]\tPSNR: {:.3f} (Best: {:.3f} @epoch {})'.format(
-                            # d.dataset.name,
-                            "DIV2K",
-                            scale,
-                            self.ckp.log[-1, idx_data, idx_scale],
-                            best[0][idx_data, idx_scale],
-                            best[1][idx_data, idx_scale] + 1
-                        )
-                    )
-                    isderain = 0
+                        # save_list = [sr, rain, norain]
+                        # self.ckp.log[-1, idx_data, idx_scale] += utility.calc_psnr(
+                        #     sr, norain, scale, self.args.rgb_range
+                        # ) 
+        #                 if self.args.save_results:
+        #                     self.ckp.save_results(d, filename[0], save_list, 1)
+        #             self.ckp.log[-1, idx_data, idx_scale] /= len(d)
+        #             best = self.ckp.log.max(0)
+        #             self.ckp.write_log(
+        #                 '[{} x{}]\tPSNR: {:.3f} (Best: {:.3f} @epoch {})'.format(
+        #                     # d.dataset.name,
+        #                     "DIV2K",
+        #                     scale,
+        #                     self.ckp.log[-1, idx_data, idx_scale],
+        #                     best[0][idx_data, idx_scale],
+        #                     best[1][idx_data, idx_scale] + 1
+        #                 )
+        #             )
+        #             isderain = 0
 
-        self.ckp.write_log('Forward: {:.2f}s\n'.format(timer_test.toc()))
-        self.ckp.write_log('Saving...')
+        # self.ckp.write_log('Forward: {:.2f}s\n'.format(timer_test.toc()))
+        # self.ckp.write_log('Saving...')
 
-        if self.args.save_results:
-            self.ckp.end_background()
+        # if self.args.save_results:
+        #     self.ckp.end_background()
 
-        self.ckp.write_log(
-            'Total: {:.2f}s\n'.format(timer_test.toc()), refresh=True
-        )
+        # self.ckp.write_log(
+        #     'Total: {:.2f}s\n'.format(timer_test.toc()), refresh=True
+        # )
 
-        torch.set_grad_enabled(True)
+        torch.set_grad_enabled(False)
 
     def prepare(self, *args):
         device = torch.device('cpu' if self.args.cpu else 'cuda')
