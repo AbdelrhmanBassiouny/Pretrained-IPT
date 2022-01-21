@@ -22,12 +22,12 @@ class Trainer():
             self.optimizer.load(ckp.dir, epoch=len(ckp.log))
 
         self.error_last = 1e8
+        self.epoch = 0
 
     def test(self):
         torch.set_grad_enabled(False)
 
-        epoch = self.optimizer.get_last_epoch()
-        self.ckp.write_log(f'\nEvaluation:(epoch {epoch})')
+        self.ckp.write_log(f'\nEvaluation:(epoch {self.epoch})')
         self.ckp.add_log(
             torch.zeros(1, len(self.loader_test), len(self.scale))
         )
@@ -53,8 +53,8 @@ class Trainer():
                     self.ckp.log[-1, idx_data, idx_scale] /= len(d)
                     best = self.ckp.log.max(0)
                     
-                    is_best = True if epoch == best else False
-                    self.ckp.save(self, epoch, is_best=is_best)
+                    is_best = True if self.epoch == best else False
+                    self.ckp.save(self, self.epoch, is_best=is_best)
                     
                     self.ckp.write_log(
                         '[{} x{}]\tPSNR: {:.3f} (Best: {:.3f} @epoch {})'.format(
@@ -80,8 +80,8 @@ class Trainer():
                 
     def train(self):
         torch.set_grad_enabled(True)
-        epoch = self.optimizer.get_last_epoch()
-        self.ckp_train.write_log(f'\Training:(epoch {epoch})')
+        self.epoch = self.optimizer.get_last_epoch()
+        self.ckp_train.write_log(f'\Training:(epoch {self.epoch})')
         self.ckp_train.add_log(
             torch.zeros(1, len(self.loader_train), len(self.scale))
         )
