@@ -419,7 +419,14 @@ class Model(nn.Module):
         print("\n\n\n y_h_cut_shape ===== ", y_h_cut.shape)
         y_h_cut_unfold = y_h_cut_unfold[...,:,int(shave/2*scale):padsize*scale-int(shave/2*scale)].contiguous()
         print("\n\n\n y_h_cut_unfold_shape ===== ", y_h_cut_unfold.shape)
-        y_h_cut_inter = torch.nn.functional.fold(y_h_cut_unfold,(padsize*scale,(w-w_cut-shave)*scale), (padsize*scale,padsize*scale-shave*scale), stride=int(shave/2*scale))
+        untr_y = y_h_cut_unfold.view(
+            int(y_h_cut_unfold.size(0)/self.batchsize_tr), -1, self.batchsize_tr)
+        print("\n\n\ny_untr_shape == ", untr_y.shape)
+        input_y = untr_y.transpose(0, 2).contiguous()
+        print("\n\n\n tr_y === ", input_y.shape)
+        print("\n\n\n func_inputs ==== ", (padsize*scale, (w-w_cut)
+                                           * scale), padsize*scale, int(shave/2*scale))
+        y_h_cut_inter = torch.nn.functional.fold(input_y,(padsize*scale,(w-w_cut-shave)*scale), (padsize*scale,padsize*scale-shave*scale), stride=int(shave/2*scale))
         
         y_ones = torch.ones(y_h_cut_inter.shape, dtype=y_h_cut_inter.dtype)
         print("\n\n\n y_h_cut_inter_shape ===== ", y_h_cut_inter.shape)
