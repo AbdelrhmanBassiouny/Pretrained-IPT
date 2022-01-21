@@ -338,7 +338,9 @@ class Model(nn.Module):
         y_w_top = self.cut_w_train(x_w_top, h, w, h_cut, w_cut, padsize,
                              shave, scale, batchsize, output_w_cut=output_w_top)
 
+        print("\n\n\n x_unfold_shape === ", x_unfold.shape)
         x_unfold = x_unfold.view(x_unfold.size(0),-1,padsize,padsize)
+        print("\n\n\n x_unfold__view_shape === ", x_unfold.shape)
         output_unfold = output_unfold.view(output_unfold.size(0), -1, padsize, padsize)
         y_unfold = []
 
