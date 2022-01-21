@@ -40,7 +40,7 @@ class Model(nn.Module):
     def forward(self, x, idx_scale, opt=None, loss=None, output=None):
         self.idx_scale = idx_scale
         # Define our training optimizer and loss
-        self.opt = opt
+        self.optimizer = opt
         self.loss = loss
         if hasattr(self.model, 'set_scale'):
             self.model.set_scale(idx_scale)
