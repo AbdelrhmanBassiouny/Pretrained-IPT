@@ -62,11 +62,11 @@ class Loss(nn.modules.loss._Loss):
                 loss = l['function'](sr, hr)
                 effective_loss = l['weight'] * loss
                 losses.append(effective_loss)
-                # self.log[-1, i] += effective_loss.item()
-                self.log[-1] += effective_loss.item()
+                self.log[-1, i] += effective_loss.item()
+                # self.log[-1] += effective_loss.item()
             elif l['type'] == 'DIS':
-                # self.log[-1, i] += self.loss[i - 1]['function'].loss
-                self.log[-1] += self.loss[i - 1]['function'].loss
+                self.log[-1, i] += self.loss[i - 1]['function'].loss
+                # self.log[-1] += self.loss[i - 1]['function'].loss
 
         loss_sum = sum(losses)
         # if len(self.loss) > 1:
