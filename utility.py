@@ -116,7 +116,8 @@ class checkpoint():
             for idx_scale, scale in enumerate(self.args.scale):
                 plt.plot(
                     axis,
-                    self.log[:, idx_data, idx_scale].numpy(),
+                    # self.log[:, idx_data, idx_scale].numpy(),
+                    self.log.numpy(),
                     label='Scale {}'.format(scale)
                 )
             plt.legend()
