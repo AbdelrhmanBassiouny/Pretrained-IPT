@@ -50,7 +50,7 @@ class Model(nn.Module):
                 return P.data_parallel(self.model, x, range(self.n_GPUs))
             else:
                 # return self.model(x)
-                return self.forward_chop_train(x, output)
+                return self.forward_chop_train(x, output=output)
         else:
             forward_function = self.forward_chop
 
