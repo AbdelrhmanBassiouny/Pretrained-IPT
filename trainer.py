@@ -132,7 +132,7 @@ class Trainer():
         # self.ckp.write_log(
         #     'Total: {:.2f}s\n'.format(timer_test.toc()), refresh=True
         # )
-
+        self.optimizer.scheduler.step()
         torch.set_grad_enabled(False)
 
     def prepare(self, *args):
