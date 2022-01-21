@@ -4,7 +4,7 @@
 import utility
 import torch
 from tqdm import tqdm
-from copy import deepcopy
+import copy
 
 class Trainer():
     def __init__(self, args, loader, my_model, my_loss, ckp):
@@ -12,7 +12,7 @@ class Trainer():
         self.scale = args.scale
 
         self.ckp = ckp
-        self.ckp_train = deepcopy(ckp)
+        self.ckp_train = copy(ckp)
         self.loader_train = loader.loader_train
         self.loader_test = loader.loader_test
         self.model = my_model
