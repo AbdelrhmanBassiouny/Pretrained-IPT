@@ -377,7 +377,10 @@ class Model(nn.Module):
     
     def cut_h_train(self, x_h_cut, h, w, h_cut, w_cut, padsize, shave, scale, batchsize, output_h_cut=None):
         print("\n\n\n x_h_cut_shape ==== ", x_h_cut.shape)
-        x_h_cut_unfold = torch.nn.functional.unfold(x_h_cut, padsize, stride=int(shave/2)).transpose(0,2).contiguous()
+        unfold = torch.nn.functional.unfold(
+            x_h_cut, padsize, stride=int(shave/2))
+        print("\n\n\n x_unfold_shape ==== ", unfold.shape)
+        x_h_cut_unfold = unfold.transpose(0,2).contiguous()
         print("\n\n\n x_h_cut_unfold_shape ==== ", x_h_cut_unfold.shape)
         x_h_cut_unfold = x_h_cut_unfold.view(x_h_cut_unfold.size(-1)*x_h_cut_unfold.size(0),-1,padsize,padsize)
         print("\n\n\n x_h_cut_unfold_shape ==== ", x_h_cut_unfold.shape)
@@ -385,7 +388,7 @@ class Model(nn.Module):
             output_h_cut, padsize, stride=int(shave/2)).transpose(0, 2).contiguous()
 
         output_h_cut_unfold = output_h_cut_unfold.view(
-            output_h_cut_unfold.size(0), -1, padsize, padsize)
+            output_h_cut_unfold.size(0)*output_h_cut_unfold.size(-1), -1, padsize, padsize)
         
         x_range = x_h_cut_unfold.size(0)//batchsize + (x_h_cut_unfold.size(0)%batchsize !=0)
         y_h_cut_unfold=[]
@@ -418,13 +421,13 @@ class Model(nn.Module):
         
         x_w_cut_unfold = torch.nn.functional.unfold(x_w_cut, padsize, stride=int(shave/2)).transpose(0,2).contiguous()
         
-        x_w_cut_unfold = x_w_cut_unfold.view(x_w_cut_unfold.size(0),-1,padsize,padsize)
+        x_w_cut_unfold = x_w_cut_unfold.view(x_w_cut_unfold.size(0)*x_w_cut_unfold.size(-1),-1,padsize,padsize)
         
         output_w_cut_unfold = torch.nn.functional.unfold(
             output_w_cut, padsize, stride=int(shave/2)).transpose(0, 2).contiguous()
 
         output_w_cut_unfold = output_w_cut_unfold.view(
-            output_w_cut_unfold.size(0), -1, padsize, padsize)
+            output_w_cut_unfold.size(0)*output_w_cut_unfold.size(-1), -1, padsize, padsize)
         
         x_range = x_w_cut_unfold.size(0)//batchsize + (x_w_cut_unfold.size(0)%batchsize !=0)
         y_w_cut_unfold=[]
