@@ -187,7 +187,7 @@ class Model(nn.Module):
         y_w_top = self.cut_w(x_w_top, h, w, h_cut, w_cut,
                              padsize, shave, scale, batchsize)
 
-        x_unfold = x_unfold.view(x_unfold.size(0), -1, padsize, padsize)
+        x_unfold = x_unfold.view(x_unfold.size(0)*self.batchsize_te, -1, padsize, padsize)
         y_unfold = []
 
         x_range = x_unfold.size(0)//batchsize + \
@@ -198,16 +198,25 @@ class Model(nn.Module):
                 self.model, x_unfold[i*batchsize:(i+1)*batchsize, ...], range(self.n_GPUs)).cpu())
         y_unfold = torch.cat(y_unfold, dim=0)
 
-        y = torch.nn.functional.fold(y_unfold.view(y_unfold.size(0), -1, 1).transpose(
-            0, 2).contiguous(), ((h-h_cut)*scale, (w-w_cut)*scale), padsize*scale, stride=int(shave/2*scale))
+        untr_y = y_unfold.view(
+            int(y_unfold.size(0)/self.batchsize_te), -1, self.batchsize_te)
+        input_y = untr_y.transpose(0, 2).contiguous()
+        
+        y = torch.nn.functional.fold(input_y, ((
+            h-h_cut)*scale, (w-w_cut)*scale), padsize*scale, stride=int(shave/2*scale))
 
         y[..., :padsize*scale, :] = y_h_top
         y[..., :, :padsize*scale] = y_w_top
 
         y_unfold = y_unfold[..., int(shave/2*scale):padsize*scale-int(shave/2*scale), int(
             shave/2*scale):padsize*scale-int(shave/2*scale)].contiguous()
-        y_inter = torch.nn.functional.fold(y_unfold.view(y_unfold.size(0), -1, 1).transpose(0, 2).contiguous(
-        ), ((h-h_cut-shave)*scale, (w-w_cut-shave)*scale), padsize*scale-shave*scale, stride=int(shave/2*scale))
+        
+        untr_y = y_unfold.view(
+            int(y_unfold.size(0)/self.batchsize_te), -1, self.batchsize_te)
+        input_y = untr_y.transpose(0, 2).contiguous()
+        
+        y_inter = torch.nn.functional.fold(input_y, ((
+            h-h_cut-shave)*scale, (w-w_cut-shave)*scale), padsize*scale-shave*scale, stride=int(shave/2*scale))
 
         y_ones = torch.ones(y_inter.shape, dtype=y_inter.dtype)
         divisor = torch.nn.functional.fold(torch.nn.functional.unfold(y_ones, padsize*scale-shave*scale, stride=int(
