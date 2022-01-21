@@ -153,7 +153,7 @@ class Model(nn.Module):
         loss = self.loss(sr.cuda(), norain.cuda())
         loss.backward()
         self.optimizer.step()
-        self.optimizer.scheduler.step()
+        # self.optimizer.scheduler.step()
         
     def forward_chop(self, x, shave=12):
         x.cpu()
