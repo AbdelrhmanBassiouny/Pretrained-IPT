@@ -341,7 +341,8 @@ class Model(nn.Module):
         print("\n\n\n x_unfold_shape === ", x_unfold.shape)
         x_unfold = x_unfold.view(x_unfold.size(0)*self.batchsize_tr,-1,padsize,padsize)
         print("\n\n\n x_unfold__view_shape === ", x_unfold.shape)
-        output_unfold = output_unfold.view(output_unfold.size(0), -1, padsize, padsize)
+        output_unfold = output_unfold.view(output_unfold.size(
+            0)*self.batchsize_tr, -1, padsize, padsize)
         y_unfold = []
 
         x_range = x_unfold.size(0)//batchsize + (x_unfold.size(0)%batchsize !=0)
