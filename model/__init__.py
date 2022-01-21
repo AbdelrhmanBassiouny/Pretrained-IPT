@@ -408,7 +408,7 @@ class Model(nn.Module):
         y_h_cut_unfold = torch.cat(y_h_cut_unfold,dim=0)
         print("\n\n\ny_unfold_shape == ", y_h_cut_unfold.shape)
         untr_y = y_h_cut_unfold.view(
-            int(y_h_cut_unfold.size(0)/self.batchsize_tr), -1, 1)
+            int(y_h_cut_unfold.size(0)/self.batchsize_tr), -1, self.batchsize_tr)
         print("\n\n\ny_untr_shape == ", untr_y.shape)
         input_y = untr_y.transpose(0, 2).contiguous()
         print("\n\n\n tr_y === ", input_y.shape)
@@ -422,7 +422,8 @@ class Model(nn.Module):
         y_ones = torch.ones(y_h_cut_inter.shape, dtype=y_h_cut_inter.dtype)
         divisor = torch.nn.functional.fold(torch.nn.functional.unfold(y_ones ,(padsize*scale,padsize*scale-shave*scale), stride=int(shave/2*scale)),(padsize*scale,(w-w_cut-shave)*scale), (padsize*scale,padsize*scale-shave*scale), stride=int(shave/2*scale)) 
         y_h_cut_inter = y_h_cut_inter/divisor
-        
+        print("\n\n\n y_hcut_indexed_shape ===== ", y_h_cut[..., :, int(
+            shave/2*scale):(w-w_cut)*scale-int(shave/2*scale)])
         y_h_cut[...,:,int(shave/2*scale):(w-w_cut)*scale-int(shave/2*scale)] = y_h_cut_inter
         return y_h_cut
         
