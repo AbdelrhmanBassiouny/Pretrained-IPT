@@ -30,9 +30,6 @@ class DIV2K(srdata.SRData):
 
         # SCALE
         # names_lr = names_lr[self.begin - 1:self.end]
-        print(names_hr)
-        print('lr name-------------------')
-        print(names_lr)
         return names_hr, names_lr
 
     def _set_filesystem(self, dir_data):
