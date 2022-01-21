@@ -37,9 +37,11 @@ class Model(nn.Module):
         )
         print(self.model, file=ckp.log_file)
 
-    def forward(self, x, idx_scale):
+    def forward(self, x, idx_scale, opt=None, loss=None):
         self.idx_scale = idx_scale
-        
+        # Define our training optimizer and loss
+        self.opt = opt
+        self.loss = loss
         if hasattr(self.model, 'set_scale'):
             self.model.set_scale(idx_scale)
 
@@ -146,8 +148,13 @@ class Model(nn.Module):
         if len(y) == 1: y = y[0]
 
         return y
+
+    def train_step(self, sr, norain):
+        loss = self.loss(sr.cuda(), norain.cuda())
+        loss.backward()
+        self.optimizer.step()
     
-    def forward_chop(self, x, shave=12):
+    def forward_chop(self, x, shave=12, output=None):
         x.cpu()
         batchsize = self.args.crop_batch_size
         h, w = x.size()[-2:]
@@ -162,8 +169,12 @@ class Model(nn.Module):
         x_unfold = torch.nn.functional.unfold(x, padsize, stride=int(shave/2)).transpose(0,2).contiguous()
 
         x_hw_cut = x[...,(h-padsize):,(w-padsize):]
-        print("SHAPEE ============== ", x_hw_cut.shape)
-        y_hw_cut = self.model.forward(x_hw_cut.cuda()).cpu()
+        print("\n\n SHAPEE ============== ", x_hw_cut.shape)
+        pred = self.model.forward(x_hw_cut.cuda())
+        if self.training:
+            assert output is not None
+            self.train_step(pred, output)
+        y_hw_cut = pred.cpu()
         print("HEEEEEEEEEEEEEERRRRRRRRRRRRRRRRR")
 
         x_h_cut = x[...,(h-padsize):,:]
@@ -183,7 +194,12 @@ class Model(nn.Module):
         x_unfold.cuda()
         print("\n\n XRANGEEEEE ====== ", x_range)
         for i in range(x_range):
-            y_unfold.append(P.data_parallel(self.model, x_unfold[i*batchsize:(i+1)*batchsize,...], range(self.n_GPUs)).cpu())
+            pred = P.data_parallel(
+                self.model, x_unfold[i*batchsize:(i+1)*batchsize, ...], range(self.n_GPUs))
+            if self.training:
+                assert output is not None
+                self.train_step(pred, output)
+            y_unfold.append(pred.cpu())
             print("i ================ ", i)
         print("HEEEEEEEEEEEEEERRRRRRRRRRRRRRRRReeeeeeeeee")
         y_unfold = torch.cat(y_unfold,dim=0)
@@ -208,7 +224,7 @@ class Model(nn.Module):
         y = torch.cat([y[...,:,:y.size(3)-int((padsize-w_cut)/2*scale)],y_w_cat[...,:,int((padsize-w_cut)/2*scale+0.5):]],dim=3)
         return y.cuda()
     
-    def cut_h(self, x_h_cut, h, w, h_cut, w_cut, padsize, shave, scale, batchsize):
+    def cut_h(self, x_h_cut, h, w, h_cut, w_cut, padsize, shave, scale, batchsize, output=None):
         
         x_h_cut_unfold = torch.nn.functional.unfold(x_h_cut, padsize, stride=int(shave/2)).transpose(0,2).contiguous()
         
@@ -217,7 +233,12 @@ class Model(nn.Module):
         y_h_cut_unfold=[]
         x_h_cut_unfold.cuda()
         for i in range(x_range):
-            y_h_cut_unfold.append(P.data_parallel(self.model, x_h_cut_unfold[i*batchsize:(i+1)*batchsize,...], range(self.n_GPUs)).cpu())
+            pred = P.data_parallel(
+                self.model, x_h_cut_unfold[i*batchsize:(i+1)*batchsize, ...], range(self.n_GPUs))
+            if self.training:
+                assert output is not None
+                self.train_step(pred, output)
+            y_h_cut_unfold.append(pred.cpu())
         y_h_cut_unfold = torch.cat(y_h_cut_unfold,dim=0)
         
         y_h_cut = torch.nn.functional.fold(y_h_cut_unfold.view(y_h_cut_unfold.size(0),-1,1).transpose(0,2).contiguous(),(padsize*scale,(w-w_cut)*scale), padsize*scale, stride=int(shave/2*scale))
@@ -231,7 +252,7 @@ class Model(nn.Module):
         y_h_cut[...,:,int(shave/2*scale):(w-w_cut)*scale-int(shave/2*scale)] = y_h_cut_inter
         return y_h_cut
         
-    def cut_w(self, x_w_cut, h, w, h_cut, w_cut, padsize, shave, scale, batchsize):
+    def cut_w(self, x_w_cut, h, w, h_cut, w_cut, padsize, shave, scale, batchsize, output=None):
         
         x_w_cut_unfold = torch.nn.functional.unfold(x_w_cut, padsize, stride=int(shave/2)).transpose(0,2).contiguous()
         
@@ -240,7 +261,12 @@ class Model(nn.Module):
         y_w_cut_unfold=[]
         x_w_cut_unfold.cuda()
         for i in range(x_range):
-            y_w_cut_unfold.append(P.data_parallel(self.model, x_w_cut_unfold[i*batchsize:(i+1)*batchsize,...], range(self.n_GPUs)).cpu())
+            pred = P.data_parallel(
+                self.model, x_w_cut_unfold[i*batchsize:(i+1)*batchsize, ...], range(self.n_GPUs))
+            if self.training:
+                assert output is not None
+                self.train_step(pred, output)
+            y_w_cut_unfold.append(pred.cpu())
         y_w_cut_unfold = torch.cat(y_w_cut_unfold,dim=0)
         
         y_w_cut = torch.nn.functional.fold(y_w_cut_unfold.view(y_w_cut_unfold.size(0),-1,1).transpose(0,2).contiguous(),((h-h_cut)*scale,padsize*scale), padsize*scale, stride=int(shave/2*scale))

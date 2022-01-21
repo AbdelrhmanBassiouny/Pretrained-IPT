@@ -150,7 +150,7 @@ class Trainer():
                         self.optimizer.zero_grad()
                         norain,rain = self.prepare(norain, rain)
                         # rain = self.prepare(rain)[0]
-                        sr = self.model(rain, idx_scale)
+                        sr = self.model(rain, idx_scale, opt=self.optimizer, loss=self.loss)
                         print("SR SHAPEE ===== ", sr.shape)
                         print("norain SHAPEE ===== ", norain.shape)
                         loss = self.loss(sr, norain)

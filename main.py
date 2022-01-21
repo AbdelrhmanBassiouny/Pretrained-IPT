@@ -28,18 +28,16 @@ def get_model():
             _model.model.load_state_dict(state_dict, strict= False)
         for param in _model.named_parameters():
             if param[0].split('.')[1] == "body":
-            #   print(param[0])
               param[1].requires_grad = False
-        # for param in _model.parameters():
-        #     print(param)
+
         return _model
 
 def main():
     global model
     if checkpoint.ok:
         loader = data.Data(args)
-        _model = get_model()
         _loss = loss.Loss(args, checkpoint) if not args.test_only else None
+        _model = get_model()
         t = Trainer(args, loader, _model, _loss, checkpoint)
         if not args.test_only:
             while not t.terminate():
