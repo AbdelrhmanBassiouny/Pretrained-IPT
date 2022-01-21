@@ -29,7 +29,6 @@ class Trainer():
         self.ckp.add_log(
             torch.zeros(1, len(self.loader_test), len(self.scale))
         )
-        print("\n\n SHAPESSSSSS === ", len(self.loader_test), len(self.scale))
         self.model.eval()
         timer_test = utility.timer()
         if self.args.save_results: self.ckp.begin_background()
@@ -84,7 +83,6 @@ class Trainer():
         self.ckp.add_log(
             torch.zeros(1, len(self.loader_train), len(self.scale))
         )
-        print("\n\n SHAPESSSSSS === ", len(self.loader_test), len(self.scale))
         self.model.train()
         timer_test = utility.timer()
         if self.args.save_results:
