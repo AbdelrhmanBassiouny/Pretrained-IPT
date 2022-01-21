@@ -43,7 +43,7 @@ class Loss(nn.modules.loss._Loss):
                 print('{:.3f} * {}'.format(l['weight'], l['type']))
                 self.loss_module.append(l['function'])
 
-        self.log = torch.Tensor([])
+        self.log = torch.Tensor()
 
         device = torch.device('cpu' if args.cpu else 'cuda')
         self.loss_module.to(device)
@@ -63,15 +63,17 @@ class Loss(nn.modules.loss._Loss):
                 effective_loss = l['weight'] * loss
                 losses.append(effective_loss)
                 # self.log[-1, i] += effective_loss.item()
-                self.log[-1] += effective_loss.item()
+                # self.log[-1] += effective_loss.item()
             elif l['type'] == 'DIS':
                 # self.log[-1, i] += self.loss[i - 1]['function'].loss
-                self.log[-1] += self.loss[i - 1]['function'].loss
+                # self.log[-1] += self.loss[i - 1]['function'].loss
+                pass
 
         loss_sum = sum(losses)
         if len(self.loss) > 1:
             # self.log[-1, -1] += loss_sum.item()
-            self.log[-1] += loss_sum.item()
+            # self.log[-1] += loss_sum.item()
+            pass
 
         return loss_sum
 
