@@ -7,12 +7,12 @@ from tqdm import tqdm
 import copy
 
 class Trainer():
-    def __init__(self, args, loader, my_model, my_loss, ckp):
+    def __init__(self, args, loader, my_model, my_loss, ckp, ckp_train=None):
         self.args = args
         self.scale = args.scale
 
         self.ckp = ckp
-        self.ckp_train = copy(ckp)
+        self.ckp_train = ckp_train
         self.loader_train = loader.loader_train
         self.loader_test = loader.loader_test
         self.model = my_model

@@ -15,6 +15,7 @@ os.system('pip install einops')
 import model
 torch.manual_seed(args.seed)
 checkpoint = utility.checkpoint(args)
+checkpoint_train = utility.checkpoint(args)
 
 def get_model():
     if checkpoint.ok:
@@ -39,7 +40,7 @@ def main():
         loader = data.Data(args)
         _loss = loss.Loss(args, checkpoint) if not args.test_only else None
         _model = get_model()
-        t = Trainer(args, loader, _model, _loss, checkpoint)
+        t = Trainer(args, loader, _model, _loss, checkpoint, ckp_train=checkpoint_train)
         if not args.test_only:
             while not t.terminate():
                 t.train()
