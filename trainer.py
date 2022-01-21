@@ -168,7 +168,8 @@ class Trainer():
                     best = self.ckp.log.max(0)
                     self.ckp.write_log(
                         '[{} x{}]\tPSNR: {:.3f} (Best: {:.3f} @epoch {})'.format(
-                            d.dataset.name,
+                            # d.dataset.name,
+                            "DIV2K",
                             scale,
                             self.ckp.log[-1, idx_data, idx_scale],
                             best[0][idx_data, idx_scale],
