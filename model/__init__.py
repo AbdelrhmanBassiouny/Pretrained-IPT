@@ -339,7 +339,7 @@ class Model(nn.Module):
                              shave, scale, batchsize, output_w_cut=output_w_top)
 
         print("\n\n\n x_unfold_shape === ", x_unfold.shape)
-        x_unfold = x_unfold.view(x_unfold.size(0),-1,padsize,padsize)
+        x_unfold = x_unfold.view(x_unfold.size(0)*self.batchsize_tr,-1,padsize,padsize)
         print("\n\n\n x_unfold__view_shape === ", x_unfold.shape)
         output_unfold = output_unfold.view(output_unfold.size(0), -1, padsize, padsize)
         y_unfold = []
