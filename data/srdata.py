@@ -53,7 +53,7 @@ class SRData(data.Dataset):
             self.begin, self.end = list(map(lambda x: int(x), data_range[1]))
             print("\n\nlrtessttttttttttttttttttttt", self.derain_lr_test)
             print("\n\nlrtessttttttttttttttttttttt", len(self.derain_lr_test))
-            self.derain_lr_test = [n[self.begin - 1:self.end] for n in self.derain_lr_test]
+            self.derain_lr_test = self.derain_lr_test[self.begin - 1:self.end]
             print("\n\nlrtessttttttttttttttttttttt", self.derain_lr_test)
             print("\n\nlrtessttttttttttttttttttttt", len(self.derain_lr_test))
             
