@@ -36,7 +36,7 @@ def get_model():
 
 def main():
     global model
-    if checkpoint.ok:
+    if checkpoint.ok and checkpoint_train.ok:
         loader = data.Data(args)
         _loss = loss.Loss(args, checkpoint) if not args.test_only else None
         _model = get_model()

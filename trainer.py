@@ -88,7 +88,7 @@ class Trainer():
         self.model.train()
         timer_test = utility.timer()
         if self.args.save_results:
-            self.ckp.begin_background()
+            self.ckp_train.begin_background()
         for idx_data, d in enumerate(self.loader_train):
             i = 0
             for idx_scale, scale in enumerate(self.scale):
