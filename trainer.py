@@ -4,6 +4,7 @@
 import utility
 import torch
 from tqdm import tqdm
+from copy import deepcopy
 
 class Trainer():
     def __init__(self, args, loader, my_model, my_loss, ckp):
@@ -11,6 +12,7 @@ class Trainer():
         self.scale = args.scale
 
         self.ckp = ckp
+        self.ckp_train = deepcopy(ckp)
         self.loader_train = loader.loader_train
         self.loader_test = loader.loader_test
         self.model = my_model
@@ -78,11 +80,11 @@ class Trainer():
                 
     def train(self):
         torch.set_grad_enabled(True)
-        # epoch = self.optimizer.get_last_epoch()
-        # self.ckp.write_log(f'\nEvaluation:(epoch {epoch})')
-        # self.ckp.add_log(
-        #     torch.zeros(1, len(self.loader_train), len(self.scale))
-        # )
+        epoch = self.optimizer.get_last_epoch()
+        self.ckp_train.write_log(f'\Training:(epoch {epoch})')
+        self.ckp_train.add_log(
+            torch.zeros(1, len(self.loader_train), len(self.scale))
+        )
         self.model.train()
         timer_test = utility.timer()
         if self.args.save_results:
@@ -96,42 +98,32 @@ class Trainer():
                         
                         self.optimizer.zero_grad()
                         norain,rain = self.prepare(norain, rain)
-                        # rain = self.prepare(rain)[0]
                         assert norain is not None
                         sr = self.model(rain, idx_scale, opt=self.optimizer, loss=self.loss, output=norain)
-                        # loss = self.loss(sr, norain)
-                        # loss.backward()
-                        # self.optimizer.step()
                         
-                        # save_list = [sr, rain, norain]
-                        # self.ckp.log[-1, idx_data, idx_scale] += utility.calc_psnr(
-                        #     sr, norain, scale, self.args.rgb_range
-                        # ) 
-        #                 if self.args.save_results:
-        #                     self.ckp.save_results(d, filename[0], save_list, 1)
-        #             self.ckp.log[-1, idx_data, idx_scale] /= len(d)
-        #             best = self.ckp.log.max(0)
-        #             self.ckp.write_log(
-        #                 '[{} x{}]\tPSNR: {:.3f} (Best: {:.3f} @epoch {})'.format(
-        #                     # d.dataset.name,
-        #                     "DIV2K",
-        #                     scale,
-        #                     self.ckp.log[-1, idx_data, idx_scale],
-        #                     best[0][idx_data, idx_scale],
-        #                     best[1][idx_data, idx_scale] + 1
-        #                 )
-        #             )
-        #             isderain = 0
+                    self.ckp_train.log[-1, idx_data, idx_scale] /= len(d)
+                    best = self.ckp_train.log.max(0)
+                    self.ckp_train.write_log(
+                        '[{} x{}]\tPSNR: {:.3f} (Best: {:.3f} @epoch {})'.format(
+                            # d.dataset.name,
+                            "DIV2K_train",
+                            scale,
+                            self.ckp_train.log[-1, idx_data, idx_scale],
+                            best[0][idx_data, idx_scale],
+                            best[1][idx_data, idx_scale] + 1
+                        )
+                    )
+                    isderain = 0
 
-        # self.ckp.write_log('Forward: {:.2f}s\n'.format(timer_test.toc()))
-        # self.ckp.write_log('Saving...')
+        self.ckp_train.write_log('Forward: {:.2f}s\n'.format(timer_test.toc()))
+        self.ckp_train.write_log('Saving...')
 
-        # if self.args.save_results:
-        #     self.ckp.end_background()
+        if self.args.save_results:
+            self.ckp_train.end_background()
 
-        # self.ckp.write_log(
-        #     'Total: {:.2f}s\n'.format(timer_test.toc()), refresh=True
-        # )
+        self.ckp_train.write_log(
+            'Total: {:.2f}s\n'.format(timer_test.toc()), refresh=True
+        )
         self.optimizer.scheduler.step()
         torch.set_grad_enabled(False)
 
