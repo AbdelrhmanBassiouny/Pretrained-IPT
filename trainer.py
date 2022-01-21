@@ -26,7 +26,7 @@ class Trainer():
 
     def test(self):
         torch.set_grad_enabled(False)
-
+        self.epoch = self.optimizer.get_last_epoch()
         self.ckp.write_log(f'\nEvaluation:(epoch {self.epoch})')
         self.ckp.add_log(
             torch.zeros(1, len(self.loader_test), len(self.scale))
@@ -105,8 +105,8 @@ class Trainer():
                     best = self.ckp_train.log.max(0)
                     self.ckp_train.write_log(
                         '[{} x{}]\tPSNR: {:.3f} (Best: {:.3f} @epoch {})'.format(
-                            # d.dataset.name,
-                            "DIV2K_train",
+                            d.dataset.name,
+                            # "DIV2K",
                             scale,
                             self.ckp_train.log[-1, idx_data, idx_scale],
                             best[0][idx_data, idx_scale],
