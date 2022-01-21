@@ -45,12 +45,12 @@ class timer():
         self.acc = 0
 
 class checkpoint():
-    def __init__(self, args):
+    def __init__(self, args, name='test'):
         self.args = args
         self.ok = True
         self.log = torch.Tensor()
         now = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
-
+        self.name = name
         if not args.load:
             if not args.save:
                 args.save = now
@@ -58,7 +58,7 @@ class checkpoint():
         else:
             self.dir = os.path.join('..', 'experiment', args.load)
             if os.path.exists(self.dir):
-                self.log = torch.load(self.get_path('psnr_log.pt'))
+                self.log = torch.load(self.get_path(f'{self.name}_psnr_log.pt'))
                 print('Continue from epoch {}...'.format(len(self.log)))
             else:
                 args.load = ''
@@ -70,11 +70,11 @@ class checkpoint():
         os.makedirs(self.dir, exist_ok=True)
         os.makedirs(self.get_path('model'), exist_ok=True)
         for d in args.data_test:
-            os.makedirs(self.get_path('results-{}'.format(d)), exist_ok=True)
+            os.makedirs(self.get_path('{}_results-{}'.format(self.name, d)), exist_ok=True)
 
-        open_type = 'a' if os.path.exists(self.get_path('log.txt'))else 'w'
-        self.log_file = open(self.get_path('log.txt'), open_type)
-        with open(self.get_path('config.txt'), open_type) as f:
+        open_type = 'a' if os.path.exists(self.get_path(f'{self.name}_log.txt'))else 'w'
+        self.log_file = open(self.get_path(f'{self.name}_log.txt'), open_type)
+        with open(self.get_path(f'{self.name}_config.txt'), open_type) as f:
             f.write(now + '\n\n')
             for arg in vars(args):
                 f.write('{}: {}\n'.format(arg, getattr(args, arg)))
@@ -92,7 +92,7 @@ class checkpoint():
 
         self.plot_psnr(epoch)
         trainer.optimizer.save(self.dir)
-        torch.save(self.log, self.get_path('psnr_log.pt'))
+        torch.save(self.log, self.get_path(f'{self.name}_psnr_log.pt'))
 
     def add_log(self, log):
         self.log = torch.cat([self.log, log])
@@ -102,7 +102,7 @@ class checkpoint():
         self.log_file.write(log + '\n')
         if refresh:
             self.log_file.close()
-            self.log_file = open(self.get_path('log.txt'), 'a')
+            self.log_file = open(self.get_path(f'{self.name}_log.txt'), 'a')
 
     def done(self):
         self.log_file.close()
@@ -124,7 +124,7 @@ class checkpoint():
             plt.xlabel('Epochs')
             plt.ylabel('PSNR')
             plt.grid(True)
-            plt.savefig(self.get_path('test_{}.pdf'.format(d)))
+            plt.savefig(self.get_path('{}_{}.pdf'.format(self.name, d)))
             plt.close(fig)
 
     def begin_background(self):
@@ -153,7 +153,7 @@ class checkpoint():
         if self.args.save_results:
             filename = self.get_path(
                 # 'results-{}'.format(dataset.dataset.name),
-                'results-{}'.format("DIV2K"),
+                'results-{}'.format(self.name, "DIV2K"),
                 '{}_x{}_'.format(filename, scale)
             )
 

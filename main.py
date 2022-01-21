@@ -15,7 +15,7 @@ os.system('pip install einops')
 import model
 torch.manual_seed(args.seed)
 checkpoint = utility.checkpoint(args)
-checkpoint_train = utility.checkpoint(args)
+checkpoint_train = utility.checkpoint(args, name='train')
 
 def get_model():
     if checkpoint.ok:
