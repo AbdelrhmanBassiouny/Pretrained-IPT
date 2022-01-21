@@ -379,7 +379,7 @@ class Model(nn.Module):
         print("\n\n\n x_h_cut_shape ==== ", x_h_cut.shape)
         x_h_cut_unfold = torch.nn.functional.unfold(x_h_cut, padsize, stride=int(shave/2)).transpose(0,2).contiguous()
         print("\n\n\n x_h_cut_unfold_shape ==== ", x_h_cut_unfold.shape)
-        x_h_cut_unfold = x_h_cut_unfold.view(x_h_cut_unfold.size(0),-1,padsize,padsize)
+        x_h_cut_unfold = x_h_cut_unfold.view(x_h_cut_unfold.size(-1), x_h_cut_unfold.size(0),-1,padsize,padsize)
         print("\n\n\n x_h_cut_unfold_shape ==== ", x_h_cut_unfold.shape)
         output_h_cut_unfold = torch.nn.functional.unfold(
             output_h_cut, padsize, stride=int(shave/2)).transpose(0, 2).contiguous()
