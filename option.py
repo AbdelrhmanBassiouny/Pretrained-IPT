@@ -43,6 +43,12 @@ parser.add_argument('--n_colors', type=int, default=3,
                     help='number of color channels to use')
 parser.add_argument('--no_augment', action='store_true',
                     help='do not use data augmentation')
+parser.add_argument('--mean_r', type=int, default=0.5,
+                    help='mean value of red')
+parser.add_argument('--mean_g', type=int, default=0.5,
+                    help='mean value of gren')
+parser.add_argument('--mean_b', type=int, default=0.5,
+                    help='mean value of blue')
 
 # Model specifications
 parser.add_argument('--model', default='ipt',
