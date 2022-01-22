@@ -14,6 +14,7 @@ import os
 os.system('pip install einops')
 import model
 torch.manual_seed(args.seed)
+np.random.seed(0)
 checkpoint = utility.checkpoint(args)
 checkpoint_train = utility.checkpoint(args, name='train')
 

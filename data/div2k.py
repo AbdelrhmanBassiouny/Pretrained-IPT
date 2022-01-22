@@ -3,7 +3,6 @@
 
 import os
 
-from sympy import get_indices
 from data import srdata
 import numpy as np
 
@@ -17,9 +16,7 @@ class DIV2K(srdata.SRData):
         if train:
             data_range = data_range[0]
             train_begin, train_end = list(map(lambda x: int(x), data_range))
-            rng = np.random.default_rng()
-            np.random.seed(0)
-            indices = rng.permutation(total_size)
+            indices = np.random.permutation(total_size)
             self.indices = indices[train_begin-1:train_end]
         else:
             if args.test_only and len(data_range) == 1:
@@ -35,12 +32,6 @@ class DIV2K(srdata.SRData):
         super(DIV2K, self).__init__(
             args, name=name, train=train, benchmark=benchmark
         )
-    
-    def get_indices(self, data_range):
-        begin, end = list(map(lambda x: int(x), data_range))
-        size = end - begin + 1
-        rng = np.random.default_rng()
-        return rng.permutation(size)
 
     def _scan(self):            
         # SCALE
