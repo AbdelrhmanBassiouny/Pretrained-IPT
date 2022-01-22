@@ -8,7 +8,6 @@ from data import srdata
 import numpy as np
 
 indices = None
-np.random.seed(0)
 class DIV2K(srdata.SRData):
     def __init__(self, args, name='DIV2K', train=True, benchmark=False):
         global indices

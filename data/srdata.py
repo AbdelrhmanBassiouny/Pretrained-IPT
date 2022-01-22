@@ -49,9 +49,9 @@ class SRData(data.Dataset):
             self.derain_test = os.path.join(args.dir_data, "Rain100L")
             self.derain_lr_test = search(self.derain_test, "rain")
             self.derain_hr_test = [path.replace("rainy/","no") for path in self.derain_lr_test]
-            # print("\n\n\n Split ===== ", self.split)
-            # print("\n\n\n INDICESSSS ===== ", self.indices)
-            # print("\n\n\n INDICESSSS_SIZE ===== ", len(self.indices))
+            print("\n\n\n Split ===== ", self.split)
+            print("\n\n\n INDICESSSS ===== ", self.indices)
+            print("\n\n\n INDICESSSS_SIZE ===== ", len(self.indices))
             self.derain_lr_test = [self.derain_lr_test[i] for i in self.indices]
             self.derain_hr_test = [self.derain_hr_test[i] for i in self.indices]
             
