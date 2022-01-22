@@ -28,10 +28,14 @@ def get_model():
                 args.pretrain = "/cache/models/ipt.pt"
             state_dict = torch.load(args.pretrain)
             _model.model.load_state_dict(state_dict, strict= False)
-        for param in _model.named_parameters():
-            if param[0].split('.')[1] == "body":
-            #   param[1].requires_grad = False
-              pass
+        if len(args.freeze) >= 1:
+            to_freeze = args.freeze.split('+')
+            freeze_dict = {'h':'head', 'b':'body', 't':'tail'}
+            freeze_list = [freeze_dict[l] for l in to_freeze]
+            for param in _model.named_parameters():
+                print(param[0])
+                # if param[0].split('.')[1] == "body":
+                #   param[1].requires_grad = False
 
         return _model
 

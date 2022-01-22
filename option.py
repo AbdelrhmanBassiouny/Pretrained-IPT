@@ -54,6 +54,8 @@ parser.add_argument('--shift_mean', default=True,
 parser.add_argument('--precision', type=str, default='single',
                     choices=('single', 'half'),
                     help='FP precision for test (single | half)')
+parser.add_argument('--freeze', type=str, default='', #b, h+b, b+t
+                    help='layers to freeze')
 
 # Training specifications
 parser.add_argument('--reset', action='store_true',
