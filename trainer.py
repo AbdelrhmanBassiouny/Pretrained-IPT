@@ -43,7 +43,7 @@ class Trainer():
                         norain,rain = self.prepare(norain, rain)
                         sr = self.model(rain, idx_scale)
                         sr = utility.quantize(sr, self.args.rgb_range)
-                        print("\n\n sr.shape === ", sr.shape)
+                        print("\n\n sr.shape === ", sr[0].shape)
                         print("\n\n hr.shape === ", norain.shape)
                         print("\n\n lr.shape === ", rain.shape)
                         # print("\n\n filename.shape === ", filename.shape)
@@ -53,7 +53,7 @@ class Trainer():
                         ) 
                         if self.args.save_results:
                             for i in range(sr.shape[0]):
-                                self.ckp.save_results(d, filename[i][0], [imgs[i].unsqueeze(0) for imgs in save_list], 1)
+                                self.ckp.save_results(d, filename[i][0], [sr[i], rain[i], norain[i]], 1)
                     self.ckp.log[-1, idx_data, idx_scale] /= len(d)
                     best = self.ckp.log.max(0)
                     
