@@ -46,14 +46,14 @@ class Trainer():
                         print("\n\n sr.shape === ", sr[0].unsqueeze(0).shape)
                         print("\n\n hr.shape === ", norain.shape)
                         print("\n\n lr.shape === ", rain.shape)
-                        print("\n\n filename.shape === ", filename)
+                        # print("\n\n filename.shape === ", filename)
                         save_list = [sr, rain, norain]
                         self.ckp.log[-1, idx_data, idx_scale] += utility.calc_psnr(
                             sr, norain, scale, self.args.rgb_range
                         ) 
                         if self.args.save_results:
                             for i in range(sr.shape[0]):
-                                self.ckp.save_results(d, filename[i][0], [sr[i].unsqueeze(
+                                self.ckp.save_results(d, filename[i], [sr[i].unsqueeze(
                                     0), rain[i].unsqueeze(0), norain[i].unsqueeze(0)], 1)
                     self.ckp.log[-1, idx_data, idx_scale] /= len(d)
                     best = self.ckp.log.max(0)
