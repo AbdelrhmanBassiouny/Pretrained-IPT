@@ -33,9 +33,10 @@ def get_model():
             freeze_dict = {'h':'head', 'b':'body', 't':'tail'}
             freeze_list = [freeze_dict[l] for l in to_freeze]
             for param in _model.named_parameters():
-                print(param[0])
-                # if param[0].split('.')[1] == "body":
-                #   param[1].requires_grad = False
+                # print(param[0])
+                if (param[0].split('.')[1] in freeze_list):
+                    print(f"\nfreezing {param[0]}")
+                    param[1].requires_grad = False
 
         return _model
 
