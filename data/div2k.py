@@ -48,10 +48,9 @@ class DIV2K(srdata.SRData):
         names_hr, names_lr = super(DIV2K, self)._scan()
         # names_hr = names_hr[self.begin - 1:self.end]
         # names_lr = [n[self.begin - 1:self.end] for n in names_lr]
-        print("\n\n\n len_hr ==== ", len(names_hr))
-        print("\n\n\n len_lr ==== ", len(names_lr))
-        # names_hr = [names_hr[i] for i in self.indices]
-        # names_lr = [names_lr[i] for i in self.indices]
+
+        names_hr = [names_hr[i] for i in self.indices]
+        names_lr = [[n[i] for i in self.indices] for n in names_lr]
 
         # SCALE
         # names_lr = names_lr[self.begin - 1:self.end]
