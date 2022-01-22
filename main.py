@@ -40,6 +40,8 @@ def get_model():
                     param[1].requires_grad = False
                 else:
                     with torch.no_grad():
+                        if param[0].split('.')[1] in ["sub_mean", "add_mean"]:
+                            continue
                         if param[0].split('.')[-1] == "weight":
                             torch.nn.init.xavier_uniform_(param[1])
                         elif param[0].split('.')[-1] == "bias":
