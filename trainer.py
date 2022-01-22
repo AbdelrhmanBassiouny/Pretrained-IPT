@@ -46,7 +46,7 @@ class Trainer():
                         print("\n\n sr.shape === ", sr[0].unsqueeze(0).shape)
                         print("\n\n hr.shape === ", norain.shape)
                         print("\n\n lr.shape === ", rain.shape)
-                        # print("\n\n filename.shape === ", filename.shape)
+                        print("\n\n filename.shape === ", filename)
                         save_list = [sr, rain, norain]
                         self.ckp.log[-1, idx_data, idx_scale] += utility.calc_psnr(
                             sr, norain, scale, self.args.rgb_range
