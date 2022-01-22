@@ -17,8 +17,8 @@ class DIV2K(srdata.SRData):
         if train:
             data_range = data_range[0]
             train_begin, train_end = list(map(lambda x: int(x), data_range))
-            np.random.seed(0)
             rng = np.random.default_rng()
+            np.random.seed(0)
             indices = rng.permutation(total_size)
             self.indices = indices[train_begin-1:train_end]
         else:
