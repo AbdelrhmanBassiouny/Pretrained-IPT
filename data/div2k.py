@@ -8,12 +8,10 @@ from data import srdata
 import numpy as np
 
 train_indices = None
-test_indices = None
-
+np.random.seed(0)
 class DIV2K(srdata.SRData):
     def __init__(self, args, name='DIV2K', train=True, benchmark=False):
         global train_indices
-        global test_indices
         data_range = [r.split('-') for r in args.data_range.split('/')]
         begin, end = int(data_range[0][0]), int(data_range[-1][-1])
         size = end - begin + 1
