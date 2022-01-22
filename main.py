@@ -18,6 +18,7 @@ np.random.seed(0)
 checkpoint = utility.checkpoint(args)
 checkpoint_train = utility.checkpoint(args, name='train')
 
+
 def get_model():
     if checkpoint.ok:
         _model = model.Model(args, checkpoint)
@@ -37,6 +38,13 @@ def get_model():
                 if (param[0].split('.')[1] in freeze_list):
                     print(f"\nfreezing {param[0]}")
                     param[1].requires_grad = False
+                else:
+                    with torch.no_grad():
+                        if param[0].split('.')[-1] == "weight":
+                            torch.nn.init.xavier_uniform_(param[1])
+                        elif param[0].split('.')[-1] == "bias":
+                            torch.nn.init.zeros_(param[1])
+                        print("\n reinitialize ",param[0])
 
         return _model
 
