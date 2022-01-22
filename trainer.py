@@ -43,7 +43,9 @@ class Trainer():
                         norain,rain = self.prepare(norain, rain)
                         sr = self.model(rain, idx_scale)
                         sr = utility.quantize(sr, self.args.rgb_range)
-                        
+                        print("\n\n sr.shape === ", sr.shape)
+                        print("\n\n hr.shape === ", norain.shape)
+                        print("\n\n lr.shape === ", rain.shape)
                         save_list = [sr, rain, norain]
                         self.ckp.log[-1, idx_data, idx_scale] += utility.calc_psnr(
                             sr, norain, scale, self.args.rgb_range
