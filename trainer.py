@@ -53,7 +53,7 @@ class Trainer():
                         ) 
                         if self.args.save_results:
                             for i in range(sr.shape[0]):
-                                self.ckp.save_results(d, filename[i][0], [imgs[i] for imgs in save_list], 1)
+                                self.ckp.save_results(d, filename[i][0], [imgs[i].unsqueeze(0) for imgs in save_list], 1)
                     self.ckp.log[-1, idx_data, idx_scale] /= len(d)
                     best = self.ckp.log.max(0)
                     
