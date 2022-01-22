@@ -36,7 +36,6 @@ def get_model():
 
 def main():
     global model
-    np.random.seed(0)
     if checkpoint.ok and checkpoint_train.ok:
         loader = data.Data(args)
         _loss = loss.Loss(args, checkpoint) if not args.test_only else None
