@@ -146,7 +146,9 @@ class SRData(data.Dataset):
                         )
                     ))
         for si, s in enumerate(self.scale):
+            print("\n\nHEREEEEEEEEEEEEEEEEEEEEEEEE")
             if s == 1:
+                print("\n\n22222222222222222HEREEEEEEEEEEEEEEEEEEEEEEEE")
                 names_lr[si]=names_hr
         return names_hr, names_lr
 
