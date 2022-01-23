@@ -53,7 +53,7 @@ parser.add_argument('--std_r', type=float, default=1,
                     help='std value of red')
 parser.add_argument('--std_g', type=float, default=1,
                     help='std value of gren')
-parser.add_argument('--mean_b', type=float, default=1,
+parser.add_argument('--std_b', type=float, default=1,
                     help='std value of blue')
 
 # Model specifications
