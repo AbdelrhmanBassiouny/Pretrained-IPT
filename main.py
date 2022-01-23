@@ -47,6 +47,15 @@ def get_model():
                         elif param[0].split('.')[-1] == "bias":
                             torch.nn.init.zeros_(param[1])
                         print("\n reinitialize ",param[0])
+        elif len(args.unfreeze) >= 1:
+            to_unfreeze = args.unfreeze.split('+')
+            unfreeze_dict = {'h': 'head', 'b': 'body', 't': 'tail'}
+            unfreeze_list = [unfreeze_dict[l] for l in to_unfreeze]
+            for param in _model.named_parameters():
+                # print(param[0])
+                if (param[0].split('.')[1] in unfreeze_list):
+                    print(f"\nfreezing {param[0]}")
+                    param[1].requires_grad = True
 
         return _model
 

@@ -68,6 +68,8 @@ parser.add_argument('--precision', type=str, default='single',
                     help='FP precision for test (single | half)')
 parser.add_argument('--freeze', type=str, default='', #b, h+b, b+t
                     help='layers to freeze')
+parser.add_argument('--unfreeze', type=str, default='',  # b, h+b, b+t
+                    help='layers to unfreeze')
 
 # Training specifications
 parser.add_argument('--reset', action='store_true',
