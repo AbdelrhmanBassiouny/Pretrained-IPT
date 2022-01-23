@@ -49,6 +49,12 @@ parser.add_argument('--mean_g', type=float, default=0.5,
                     help='mean value of gren')
 parser.add_argument('--mean_b', type=float, default=0.5,
                     help='mean value of blue')
+parser.add_argument('--std_r', type=float, default=1,
+                    help='std value of red')
+parser.add_argument('--std_g', type=float, default=1,
+                    help='std value of gren')
+parser.add_argument('--mean_b', type=float, default=1,
+                    help='std value of blue')
 
 # Model specifications
 parser.add_argument('--model', default='ipt',
