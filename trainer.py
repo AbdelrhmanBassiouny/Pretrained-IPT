@@ -110,6 +110,9 @@ class Trainer():
                         )
                     self.ckp_train.log[-1, idx_data, idx_scale] /= len(d)
                     best = self.ckp_train.log.max(0)
+                    self.ckp_train.plot_psnr(self.epoch+1)
+                    torch.save(self.ckp_train.log, self.ckp_train.get_path(
+                        f'{self.ckp_train.name}_psnr_log.pt'))
                     self.ckp_train.write_log(
                         '[{} x{}]\tPSNR: {:.3f} (Best: {:.3f} @epoch {})'.format(
                             # d.dataset.name,
