@@ -50,7 +50,7 @@ class Trainer():
                         save_list = [sr, rain, norain]
                         self.ckp.log[-1, idx_data, idx_scale] += utility.calc_psnr(
                             sr, norain, scale, self.args.rgb_range
-                        ) 
+                        )
                         if self.args.save_results:
                             for i in range(sr.shape[0]):
                                 self.ckp.save_results(d, filename[i], [sr[i].unsqueeze(
@@ -58,7 +58,8 @@ class Trainer():
                     self.ckp.log[-1, idx_data, idx_scale] /= len(d)
                     best = self.ckp.log.max(0)
                     
-                    is_best = True if self.epoch == best else False
+                    is_best = True if self.epoch == best[1][idx_data,
+                                                            idx_scale] + 1 else False
                     self.ckp.save(self, self.epoch, is_best=is_best)
                     
                     self.ckp.write_log(
