@@ -54,7 +54,7 @@ def get_model():
             for param in _model.named_parameters():
                 # print(param[0])
                 if (param[0].split('.')[1] in unfreeze_list):
-                    print(f"\nfreezing {param[0]}")
+                    print(f"\n unfreezing {param[0]}")
                     param[1].requires_grad = True
 
         return _model
