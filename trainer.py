@@ -26,7 +26,7 @@ class Trainer():
 
     def test(self):
         torch.set_grad_enabled(False)
-        self.epoch = self.optimizer.get_last_epoch() - 1
+        self.epoch = self.optimizer.get_last_epoch()
         self.ckp.write_log(f'\nEvaluation:(epoch {self.epoch})')
         self.ckp.add_log(
             torch.zeros(1, len(self.loader_test), len(self.scale))
@@ -111,7 +111,7 @@ class Trainer():
                         )
                     self.ckp_train.log[-1, idx_data, idx_scale] /= len(d)
                     best = self.ckp_train.log.max(0)
-                    self.ckp_train.plot_psnr(self.epoch)
+                    self.ckp_train.plot_psnr(self.epoch+1)
                     torch.save(self.ckp_train.log, self.ckp_train.get_path(
                         f'{self.ckp_train.name}_psnr_log.pt'))
                     self.ckp_train.write_log(
