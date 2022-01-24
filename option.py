@@ -43,6 +43,18 @@ parser.add_argument('--n_colors', type=int, default=3,
                     help='number of color channels to use')
 parser.add_argument('--no_augment', action='store_true',
                     help='do not use data augmentation')
+parser.add_argument('--mean_r', type=float, default=0.5,
+                    help='mean value of red')
+parser.add_argument('--mean_g', type=float, default=0.5,
+                    help='mean value of gren')
+parser.add_argument('--mean_b', type=float, default=0.5,
+                    help='mean value of blue')
+parser.add_argument('--std_r', type=float, default=1,
+                    help='std value of red')
+parser.add_argument('--std_g', type=float, default=1,
+                    help='std value of gren')
+parser.add_argument('--std_b', type=float, default=1,
+                    help='std value of blue')
 
 # Model specifications
 parser.add_argument('--model', default='ipt',
@@ -54,6 +66,10 @@ parser.add_argument('--shift_mean', default=True,
 parser.add_argument('--precision', type=str, default='single',
                     choices=('single', 'half'),
                     help='FP precision for test (single | half)')
+parser.add_argument('--freeze', type=str, default='', #b, h+b, b+t
+                    help='layers to freeze')
+parser.add_argument('--unfreeze', type=str, default='',  # b, h+b, b+t
+                    help='layers to unfreeze')
 
 # Training specifications
 parser.add_argument('--reset', action='store_true',
@@ -74,6 +90,8 @@ parser.add_argument('--self_ensemble', action='store_true',
                     help='use self-ensemble method for test')
 parser.add_argument('--test_only', action='store_true',
                     help='set this option to test the model')
+parser.add_argument('--validate', action='store_true',
+                    help='set this option to test on validation')
 parser.add_argument('--gan_k', type=int, default=1,
                     help='k value for adversarial loss')
 

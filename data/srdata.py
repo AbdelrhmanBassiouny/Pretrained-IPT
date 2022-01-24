@@ -49,6 +49,12 @@ class SRData(data.Dataset):
             self.derain_test = os.path.join(args.dir_data, "Rain100L")
             self.derain_lr_test = search(self.derain_test, "rain")
             self.derain_hr_test = [path.replace("rainy/","no") for path in self.derain_lr_test]
+            print("\n\n\n Split ===== ", self.split)
+            print("\n\n\n INDICESSSS ===== ", self.indices)
+            print("\n\n\n INDICESSSS_SIZE ===== ", len(self.indices))
+            self.derain_lr_test = [self.derain_lr_test[i] for i in self.indices]
+            self.derain_hr_test = [self.derain_hr_test[i] for i in self.indices]
+            
         if self.args.deblur:
             self.deblur_dataroot = os.path.join(args.dir_data, "GOPRO_Large/train")
             self.deblur_hr = search(self.deblur_dataroot, "sharp")
@@ -76,6 +82,11 @@ class SRData(data.Dataset):
                         os.path.join(self.dir_hr),
                         exist_ok=True
                     )
+                    # SCALE
+                    # os.makedirs(
+                    #     os.path.join(self.dir_lr),
+                    #     exist_ok=True
+                    # )
                 else:
                     os.makedirs(
                         os.path.join(
@@ -86,11 +97,19 @@ class SRData(data.Dataset):
                     )
             
             self.images_hr, self.images_lr = [], [[] for _ in self.scale]
+            # SCALE
+            # self.images_hr, self.images_lr = [], []
             for h in list_hr:
                 b = h.replace(self.apath, path_bin)
                 b = b.replace(self.ext[0], '.pt')
                 self.images_hr.append(b)
                 self._check_and_load(args.ext, h, b, verbose=True) 
+            # SCALE
+            # for h in list_lr:
+            #     b = h.replace(self.apath, path_bin)
+            #     b = b.replace(self.ext[0], '.pt')
+            #     self.images_lr.append(b)
+            #     self._check_and_load(args.ext, h, b, verbose=True) 
             for i, ll in enumerate(list_lr):
                 for l in ll:
                     b = l.replace(self.apath, path_bin)
@@ -99,6 +118,7 @@ class SRData(data.Dataset):
                     self._check_and_load(args.ext, l, b, verbose=True) 
         if train:
             n_patches = args.batch_size * args.test_every
+            print(f'patches {n_patches} batch size {args.batch_size} data train {len(args.data_train)}')
             n_images = len(args.data_train) * len(self.images_hr)
             if n_images == 0:
                 self.repeat = 0
@@ -128,6 +148,16 @@ class SRData(data.Dataset):
         for si, s in enumerate(self.scale):
             if s == 1:
                 names_lr[si]=names_hr
+        return names_hr, names_lr
+
+    # Below functions as used to prepare images
+    def _scan_modified(self):
+        names_hr = sorted(
+            glob.glob(os.path.join(self.dir_hr, '*' + self.ext[0]))
+        )
+        names_lr = sorted(
+            glob.glob(os.path.join(self.dir_lr, '*' + self.ext[0]))
+        )
         return names_hr, names_lr
 
     def _set_filesystem(self, dir_data):
@@ -202,6 +232,8 @@ class SRData(data.Dataset):
         return hr, filename
     
     def _load_rain_test(self, idx):
+        # print('index is this', idx)
+        # print('length is this', len(self.derain_hr_test))
         f_hr = self.derain_hr_test[idx]
         f_lr = self.derain_lr_test[idx]
         filename, _ = os.path.splitext(os.path.basename(f_lr))

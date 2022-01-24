@@ -11,7 +11,7 @@ from torch.utils.data import ConcatDataset
 class MyConcatDataset(ConcatDataset):
     def __init__(self, datasets):
         super(MyConcatDataset, self).__init__(datasets)
-        self.train = datasets[0].train
+        self.train = datasets[0].train        
 
     def set_scale(self, idx_scale):
         for d in self.datasets:
@@ -26,15 +26,16 @@ class Data:
                 module_name = d if d.find('DIV2K-Q') < 0 else 'DIV2KJPEG'
                 m = import_module('data.' + module_name.lower())
                 datasets.append(getattr(m, module_name)(args, name=d))
-
-            self.loader_train = dataloader.DataLoader(
+            
+            print(datasets[0])
+            self.loader_train = [dataloader.DataLoader(
                 MyConcatDataset(datasets),
                 batch_size=args.batch_size,
                 shuffle=True,
                 pin_memory=not args.cpu,
                 num_workers=args.n_threads,
-            )
-
+            )]
+            
         self.loader_test = []
         for d in args.data_test:
             if d in ['Set5', 'Set14', 'B100', 'Urban100', 'Manga109','CBSD68','Rain100L','GOPRO_Large']:

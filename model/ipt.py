@@ -27,6 +27,12 @@ class ipt(nn.Module):
         kernel_size = 3 
         act = nn.ReLU(True)
 
+
+        # self.sub_mean = common.MeanShift(
+        #     args.rgb_range, rgb_mean=(args.mean_r, args.mean_g, args.mean_b), rgb_std=(args.std_r, args.std_g, args.std_b))
+        # self.add_mean = common.MeanShift(args.rgb_range, rgb_mean=(
+        #     args.mean_r, args.mean_g, args.mean_b), rgb_std=(args.std_r, args.std_g, args.std_b), sign=1)
+        
         self.sub_mean = common.MeanShift(args.rgb_range)
         self.add_mean = common.MeanShift(args.rgb_range, sign=1)
 

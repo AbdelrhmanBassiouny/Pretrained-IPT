@@ -2,29 +2,55 @@
 #            Huawei Technologies Co., Ltd. <foss@huawei.com>
 
 import os
-from data import srdata
 
+from data import srdata
+import numpy as np
+
+indices = None
 class DIV2K(srdata.SRData):
     def __init__(self, args, name='DIV2K', train=True, benchmark=False):
+        global indices
         data_range = [r.split('-') for r in args.data_range.split('/')]
+        begin, end = int(data_range[0][0]), int(data_range[-1][-1])
+        total_size = end - begin + 1
         if train:
             data_range = data_range[0]
+            train_begin, train_end = list(map(lambda x: int(x), data_range))
+            indices = np.random.permutation(total_size)
+            self.indices = indices[train_begin-1:train_end]
+        elif args.validate:
+            data_range = data_range[1]
+            train_begin, train_end = list(map(lambda x: int(x), data_range))
+            indices = np.random.permutation(total_size)
+            self.indices = indices[train_begin-1:train_end]
         else:
-            if args.test_only and len(data_range) == 1:
+            if args.test_only and len(data_range) == 1 and not args.validate:
                 data_range = data_range[0]
+            
             else:
                 data_range = data_range[1]
-
-        self.begin, self.end = list(map(lambda x: int(x), data_range))
+            test_begin, test_end = list(map(lambda x: int(x), data_range))
+            if indices is not None:
+                self.indices = indices[test_begin-1:test_end]
+            else:
+                self.indices = list(range(test_begin-1, test_end, 1))
+        # self.begin, self.end = list(map(lambda x: int(x), data_range))
         super(DIV2K, self).__init__(
             args, name=name, train=train, benchmark=benchmark
         )
 
-    def _scan(self):
+    def _scan(self):            
+        # SCALE
+        # names_hr, names_lr = super(DIV2K, self)._scan_modified()
         names_hr, names_lr = super(DIV2K, self)._scan()
-        names_hr = names_hr[self.begin - 1:self.end]
-        names_lr = [n[self.begin - 1:self.end] for n in names_lr]
+        # names_hr = names_hr[self.begin - 1:self.end]
+        # names_lr = [n[self.begin - 1:self.end] for n in names_lr]
 
+        names_hr = [names_hr[i] for i in self.indices]
+        names_lr = [[n[i] for i in self.indices] for n in names_lr]
+
+        # SCALE
+        # names_lr = names_lr[self.begin - 1:self.end]
         return names_hr, names_lr
 
     def _set_filesystem(self, dir_data):
