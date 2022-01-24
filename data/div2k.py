@@ -18,9 +18,15 @@ class DIV2K(srdata.SRData):
             train_begin, train_end = list(map(lambda x: int(x), data_range))
             indices = np.random.permutation(total_size)
             self.indices = indices[train_begin-1:train_end]
+        elif args.validate:
+            data_range = data_range[1]
+            train_begin, train_end = list(map(lambda x: int(x), data_range))
+            indices = np.random.permutation(total_size)
+            self.indices = indices[train_begin-1:train_end]
         else:
-            if args.test_only and len(data_range) == 1:
+            if args.test_only and len(data_range) == 1 and not args.validate:
                 data_range = data_range[0]
+            
             else:
                 data_range = data_range[1]
             test_begin, test_end = list(map(lambda x: int(x), data_range))

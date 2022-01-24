@@ -57,6 +57,7 @@ class checkpoint():
             self.dir = os.path.join('..', 'experiment', args.save)
         else:
             self.dir = os.path.join('..', 'experiment', args.load)
+            print("\n\n\n dir ==== ", self.dir)
             if os.path.exists(self.dir):
                 self.log = torch.load(self.get_path(f'{self.name}_psnr_log.pt'))
                 print('Continue from epoch {}...'.format(len(self.log)))
